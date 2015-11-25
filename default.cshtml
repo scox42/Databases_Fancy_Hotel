@@ -15,6 +15,7 @@
                 var row = db.QuerySingle("SELECT password FROM Management WHERE musername = @0", userName);
                 if (row != null && password.Equals(row.password))
                 {
+                    db.Close();
                     Session["Management"] = true;
                     Response.Redirect("~/main");
                 }
@@ -28,6 +29,7 @@
                 var row = db.QuerySingle("SELECT password FROM Customer WHERE cusername = @0", userName);
                 if (row != null && password.Equals(row.password))
                 {
+                    db.Close();
                     Session["Management"] = false;
                     Response.Redirect("~/main");
                 }

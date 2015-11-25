@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@{
+    //var db = Database.Open("cs4400_Group_86");
+    var queryString = "SELECT monthname(start) AS Month, location AS Location, count(start) AS Reservations FROM Reservation " +
+        "NATURAL JOIN ReservationHasRoom GROUP BY concat(month(start), location) ORDER BY Location";
+}
+
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -19,6 +25,19 @@
           <th>Location</th>
           <th>Total Number of Reservations</th>
         </tr>
+          <tbody>
+            @using(var db = Database.Open("cs4400_Group_86"))
+            {
+                foreach (var row in db.Query(queryString))
+                {
+                    <tr>
+                        <td>@row.Month</td>
+                        <td>@row.Location</td>
+                        <td>@row.Reservations</td>
+                    </tr>
+                }
+            }
+          </tbody>
       </table>   
     </div>	
 	<!-- END View Reservation Table -->
