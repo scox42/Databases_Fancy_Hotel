@@ -11,8 +11,8 @@
   </head>
   <body>
  	  <!-- Look up -->
- 	  <div class="aform moveup">
-      <h1 class="center">Enter your reservation number to update</h1>
+ 	  <div class="section">
+      <h3 class="center">Enter your reservation number to update</h3>
       <form>
         <div class="form-group">
           <label for="reservationID">Reservation ID</label>
@@ -24,22 +24,24 @@
     <!-- END Look up -->
 
     <!-- New Dates -->
-    <div class="center aform movedown">
-      <h3>Old dates:</h3>
+    <div class="section hidden">
+      <h3 class="center">Select New Dates</h3>
+      <h4>Old dates:</h4>
       <p>2015/12/03 to 2015/12/07</p>
-      <h3>New dates:</h3>
+      <h4>New dates:</h4>
       <div class="input-group input-daterange">
           <input type="text" class="form-control" value="2015/12/03">
           <span class="input-group-addon">to</span>
           <input type="text" class="form-control" value="2016/12/03">
       </div>
-      <button type="submit" class="btn btn-default">Search Availability</button>
+      <button type="submit" class="btn btn-default" style ="margin-top: 20px">Search Availability</button>
     </div>
     <!-- END New Dates -->
 
     <!-- Availibilities -->
-    <div class="center aform movedown2">
-      <table>
+    <div class="section hidden">
+      <h3 class="center">Select New Room</h3>
+      <table id="table-3">
         <tr>
           <th>Room Number</th>
           <th>Room Category</th>

@@ -1,4 +1,28 @@
-﻿<!DOCTYPE html>
+﻿@{
+    Validation.RequireField("Username1", "Must input a user name.");
+    Validation.RequireField("Password1", "Must enter a password.");
+    Validation.RequireField("confirmPassword1", "Must enter the password again.");
+    Validation.RequireField("Email1", "Must enter an email.");
+
+    var db = Database.Open("cs4400_Group_86");
+    var userNameReg = Request.Form["Username1"];
+    var passwordReg = Request.Form["Password1"];
+    var passwordConfReg = Request.Form["confirmPassword1"];
+    var emailReg = Request.Form["Email1"]; 
+    
+    if (IsPost && Validation.IsValid())
+    {
+        if (ModelState.IsValid)
+        {
+            if (passwordReg == passwordConfReg &&) 
+            {
+                
+            }
+        }
+    }
+}
+
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -30,7 +54,7 @@
 			    <label for="exampleEmail1">Email</label>
 			    <input type="text" class="form-control" id="Email1" placeholder="Email">
 			  </div>
-			  <button type="submit" class="btn btn-default" action="registration.php" method="post">Submit</button>
+			  <button type="submit" class="btn btn-default" action="registration.cshtml" method="post">Submit</button>
 			</form>
 		</div>
 	<!-- END Registration Form -->

@@ -11,25 +11,27 @@
   </head>
   <body>
  	  <!-- Choose Location -->
-		<div class="aform moveup">
-	  	<h1 class="center">View a Hotel</h1>
+		<div class="section">
+	  	<h3 class="center">View a Hotel</h3>
 		  <form>
 			  <div class="form-group">
-					<select class="form-control">
-	            <option value="Atlanta">Atlanta</option>
-	            <option value="Charlotte">Charlotte</option>
-	            <option value="Savannah">Savannah</option>
-	            <option value="Orlando">Orlando</option>
-	            <option value="Miami">Miami</option>
-	        </select>
+				<select class="form-control" style="max-width: 33%">
+	                <option value="Atlanta">Atlanta</option>
+	                <option value="Charlotte">Charlotte</option>
+	                <option value="Savannah">Savannah</option>
+	                <option value="Orlando">Orlando</option>
+	                <option value="Miami">Miami</option>
+	            </select>
+              </div>
 			  <button type="submit" class="btn btn-default">Check Reviews</button>
 			</form>
 		</div>		
 	<!-- END Choose Location -->
 
 	 	<!-- View Feedback Table -->
-		<div class="center aform movedown2">
-      <table>
+		<div class="section hidden">
+        <h3 class="center">Feedback:</h3>
+      <table id="table-3">
         <tr>
           <th>Rating</th>
           <th>Comment</th>
