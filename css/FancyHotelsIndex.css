@@ -1,0 +1,78 @@
+.login-form {
+   width:33.3%;
+   position: absolute;
+   top: 33.333%;
+   left: 33.333%;
+/*   background-color: rgba(0,0,0,.7);*/
+   padding: 20px 30px;
+   border: 5px groove white;
+}
+
+.form-group label {
+	font-size: 1.333em;
+	color: purple;
+	font-family: "Times New Roman";
+}
+
+#carousel-example-generic {
+	margin-top: -20px;
+	height: 800px;
+}
+
+#carousel-example-generic button {
+	left: 30%;
+}
+
+.item {
+	height: 800px;
+}
+
+.item div {
+	background-color: rgba(0,0,0,.5);
+	font-size: 1.777em;
+}
+
+.main {
+	height: 100%;
+}
+
+.hideMe {
+    display: none;
+}
+
+body {
+	background-color: white;
+}
+
+.aform {
+   width:33.3%;
+   position: absolute;
+   top: 33.333%;
+   left: 33.333%;
+/*   background-color: rgba(0,0,0,.7);*/
+   padding: 20px 30px;
+   border: 5px groove white;
+   list-style: none;
+}
+
+.moveup {
+	top: 10%;
+}
+
+.movedown {
+	top: 70%;
+}
+
+.movedown2 {
+	top: 130%;
+}
+
+
+.center {
+	text-align: center;
+}
+
+th, td
+{
+    padding:15px;
+}

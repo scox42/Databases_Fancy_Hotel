@@ -1,0 +1,81 @@
+h1 {
+	color: #340740;
+}
+
+/*NAVIGATION AND HEADING*/
+.navbar {
+	margin: 0;
+}
+
+.navbar-brand {
+	padding-top: 0;
+}
+
+.navbar-brand img {
+	height:3em; 
+	width:3em;
+}
+
+.heading {
+	display: border-box;
+  padding-top: 2em;
+  padding-bottom: 3em;
+  height: 720px;
+  background: #000000 url('../img/BlackandWhitePractice.jpg') no-repeat center;
+  background-size: cover;
+  text-align: center;
+  font-family: Comfortaa;
+  /*margin-top:1em;*/
+  margin-bottom: 0px;
+  border-top: 10px solid #340740;
+  border-bottom: 10px solid #340740;
+}
+
+.img-responsive {
+	margin: 0 auto;
+}
+
+.img_margin {
+	border-top: 4px solid #340740;
+	padding-top: 40px;
+	margin-top: 20px;
+}
+
+.contrast {
+	padding: 1em;
+	background-color: rgba(255,255,255,.5);
+}
+
+@keyframes fadeIn {
+	from {opacity: 0;
+		margin-top: 0px;}
+	to {opacity: 1;
+		margin-top: 20px;}
+}
+
+.fadein {
+	animation: fadeIn 4s 1;
+}
+
+/*END NAVIGATION AND HEADING*/
+
+.section_light {
+	height: 170px;
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+	background-color: white;
+	color: black;
+}
+
+/*ABOUT ME PAGE*/
+
+.main {
+	background-color: #e7e7e7;
+	padding-top: 50px;
+}
+
+.section_light h1 {
+	color: #340740;
+	text-align: center;
+}

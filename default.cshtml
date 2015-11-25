@@ -1,0 +1,138 @@
+﻿@{
+    Validation.RequireField("user", "Must input a user name.");
+    Validation.RequireField("pass", "Must enter a password.");
+
+    var db = Database.Open("cs4400_Group_86");
+    var userName = Request.Form["user"];
+    var password = Request.Form["pass"];
+    
+    if (IsPost && Validation.IsValid())
+    {
+        if (ModelState.IsValid)
+        {
+            var row = db.QuerySingle("SELECT password FROM Customer WHERE cusername = @0", userName);
+            if (row != null && password.Equals(row.password))
+            {
+                Response.Redirect("~/main");
+            }
+            else
+            {
+                ModelState.AddError("BadUserPass", "Invalid Username or Password. Please try again.");
+            }
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FancyHotels.com</title>
+    <link href='http://fonts.googleapis.com/css?family=Comfortaa:400,700,300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/FancyHotelsIndex.css">
+  </head>
+  <body class="main">
+    <!-- NAVIGATION -->
+    <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="default.cshtml">Home<span class="sr-only">(current)</span></a></li>
+          <li><a href="registration.cshtml">Register Now<span class="sr-only"></span></a></li>
+        </ul>
+              <ul class="nav navbar-nav navbar-right">
+        <li><a href="tel:7062182938">Phone Number: 1-800-MYBLISS</a></li>
+      </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- END NAVIGATION -->
+
+  <!-- Photo Slider -->
+  <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+    <div class="login-form">
+    <form>
+    <div class="form-group">
+      <label for="exampleUsername1">Username</label>
+      <input type="text" class="form-control" id="exampleUsername1" placeholder="Username">
+    </div>
+    <div class="form-group">
+      <label for="examplePassword1">Password</label>
+      <input type="password" class="form-control" id="examplePassword1" placeholder="Password">
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+  </form>
+  </div>
+  <!-- Indicators -->
+  <ol class="carousel-indicators">
+    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+  </ol>
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner" role="listbox">
+    <div class="item active">
+      <img src="img/Denarau-Island-Hotel.jpg" alt="Dubai">
+      <div class="carousel-caption">
+        Relax by Beautiful Pools
+      </div>
+    </div>
+    <div class="item">
+      <img src="img/Indoor-Outdoor.jpg" alt="Indoor-Outdoor Living Spaces">
+      <div class="carousel-caption">
+        Indoor-Outdoor Living Spaces
+      </div>
+    </div>
+    <div class="item">
+      <img src="img/Fancy Exterior.jpg" alt="Welcome Home">
+      <div class="carousel-caption">
+        Enjoy Your Stay!
+      </div>
+    </div> 
+  </div>
+
+  <!-- Controls -->
+  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+<!-- END Photo Slider -->
+
+  <!-- Login Form -->
+  <div class="login-form">
+  <form method="post" action="">
+  <div class="form-group">
+    <label for="user">Username</label>
+    <input type="text" class="form-control" id="user" name="user">
+  </div>
+  <div class="form-group">
+    <label for="pass">Password</label>
+    <input type="password" class="form-control" id="pass" name="pass" placeholder="Password">
+  </div>
+  <input type="submit" class="btn btn-default submit" value="Log In"/>
+        @Html.ValidationSummary(false)
+</form>
+</div>
+  <!-- END Login Form -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  </body>
+</html>
