@@ -10,14 +10,31 @@
     {
         if (ModelState.IsValid)
         {
-            var row = db.QuerySingle("SELECT password FROM Customer WHERE cusername = @0", userName);
-            if (row != null && password.Equals(row.password))
+            if (userName.StartsWith("M"))
             {
-                Response.Redirect("~/main");
+                var row = db.QuerySingle("SELECT password FROM Management WHERE musername = @0", userName);
+                if (row != null && password.Equals(row.password))
+                {
+                    Session["Management"] = true;
+                    Response.Redirect("~/main");
+                }
+                else
+                {
+                    ModelState.AddError("BadUserPass", "Invalid Username or Password. Please try again.");
+                }
             }
-            else
+            else if (userName.StartsWith("C"))
             {
-                ModelState.AddError("BadUserPass", "Invalid Username or Password. Please try again.");
+                var row = db.QuerySingle("SELECT password FROM Customer WHERE cusername = @0", userName);
+                if (row != null && password.Equals(row.password))
+                {
+                    Session["Management"] = false;
+                    Response.Redirect("~/main");
+                }
+                else
+                {
+                    ModelState.AddError("BadUserPass", "Invalid Username or Password. Please try again.");
+                }
             }
         }
     }
