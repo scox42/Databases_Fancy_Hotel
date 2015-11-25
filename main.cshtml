@@ -14,8 +14,8 @@
  	  <div class="center aform">
         @if ((bool)Session["Management"])
         {
-            <h2>Available Reports</h2>
-            <ul>
+            <h3>Available Reports</h3>
+            <ul class="noStyle">
 	            <li><a href="~/reservation_report">View Reservation Report</a></li>
 	            <li><a href="~/popular_room_report">View Popular Room Category Report</a></li>
 	            <li><a href="~/revenue_report">View Revenue Report</a></li>
@@ -23,8 +23,8 @@
         }
         else
         {
-  		    <h2>Welcome, How can we help you today? </h2>
-  		    <ul>
+  		    <h3>Welcome, How can we help you today? </h3>
+  		    <ul class="noStyle">
                 <li><a href="~/credit">Update Credit Card Info</a></li>
 	            <li><a href="~/search">Make a new Reservation</a></li>
 	            <li><a href="~/update_reservation">Update a Reservation</a></li>
