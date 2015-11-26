@@ -38,6 +38,7 @@
                     ModelState.AddError("BadUserPass", "Invalid Username or Password. Please try again.");
                 }
             }
+            Session["User"] = userName;
         }
     }
 }
