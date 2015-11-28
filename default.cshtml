@@ -3,13 +3,14 @@
     Validation.RequireField("pass", "Must enter a password.");
 
     var db = Database.Open("cs4400_Group_86");
-    var userName = Request.Form["user"];
-    var password = Request.Form["pass"];
     
     if (IsPost && Validation.IsValid())
     {
         if (ModelState.IsValid)
         {
+            var userName = Request.Form["user"];
+            var password = Request.Form["pass"];
+
             if (userName.StartsWith("M"))
             {
                 var row = db.QuerySingle("SELECT password FROM Management WHERE musername = @0", userName);
@@ -17,6 +18,7 @@
                 {
                     db.Close();
                     Session["Management"] = true;
+                    Response.Cookies["UserName"].Value = userName;
                     Response.Redirect("~/main");
                 }
                 else
@@ -31,6 +33,7 @@
                 {
                     db.Close();
                     Session["Management"] = false;
+                    Response.Cookies["UserName"].Value = userName;
                     Response.Redirect("~/main");
                 }
                 else

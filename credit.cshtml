@@ -1,4 +1,25 @@
-﻿<!DOCTYPE html>
+﻿@{
+    //Validation.RequireFields("name", "cardNum", "expDate", "cvv");
+    Validation.RequireField("cardName", "Name can't be empty");
+    //Validation.Add("cardNum", Validator.Regex("^\\d{16}$", "Credit Card Number must be 16 digits"));    
+
+    if(IsPost)
+    {
+        if (Request["submit"] == "Insert")
+        {
+
+        }
+        else if (Request["submit"] == "Delete")
+        {
+            using (var db = Database.Open("cs4400_Group_86"))
+            {
+                db.Execute("DELETE FROM PaymentInfo WHERE cardNum = @0", Request["cardList"]);
+                
+            }
+        }
+    }
+}
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -13,40 +34,48 @@
  	  <!-- Registration Form -->
 	  <div class="sectionNoBorder col-md-6">
 	  	<h3 class="center">Add Credit Card Info</h3>
-		  <form>
+		  <form method="post">
 			  <div class="form-group">
-			    <label for="exampleUsername1">Name on Card</label>
-			    <input type="text" class="form-control" id="name" placeholder="Full Name">
+			    <label for="cardName">Name on Card</label>
+			    <input type="text" class="form-control" id="cardName" name="cardName" />
 			  </div>
 			  <div class="form-group">
 			    <label for="examplePassword1">Card Number</label>
-			    <input type="text" class="form-control" id="cardNum" placeholder="Card Number">
+			    <input type="text" class="form-control" id="cardNum" name="cardNum" placeholder="Card Number" />
 			  </div>
 			  <div class="form-group">
 			    <label for="examplePassword1">Expiration Date</label>
-			    <input type="text" class="form-control" id="01/16" placeholder="Expiration Date">
+			    <input type="date" class="form-control" id="expDate" name="expDate" placeholder="Expiration Date" />
 			  </div>
 			  <div class="form-group">
 			    <label for="examplePassword1">CVV</label>
-			    <input type="text" class="form-control" id="Email1" placeholder="CVV">
+			    <input type="text" class="form-control" id="cvv" name="cvv" placeholder="CVV" />
 			  </div>
-			  <button type="submit" class="btn btn-default">Submit</button>
+			  <input type="submit" class="btn btn-default" value="Insert" />
+              @Html.ValidationSummary(false)
 			</form>
 		</div>
 
 		<div class="sectionNoBorder col-md-6">
 	  	<h3 class="center">Delete Credit Card Info</h3>
-		    <form class="margin40">
+		    <form class="margin40" method="post">
 			  <div class="form-group">
-				<select class="form-control">
-	                <option value="Atlanta">8219</option>
+				<select class="form-control" name="cardList">
+	                @using (var db = Database.Open("cs4400_Group_86"))
+                     {
+                        foreach (var row in db.Query("SELECT cardNum FROM PaymentInfo WHERE CUserName = @0", Request.Cookies["UserName"].Value))
+                        {
+                            string lastFour = row.cardNum.ToString();
+                            lastFour = "xxxx xxxx xxxx " + lastFour.Substring(lastFour.Length - 4);
+                            <option value="@row.cardNum.ToString()">@lastFour</option>
+                        }
+                     }
 	            </select>
               </div>
-			  <button type="submit" class="btn btn-default" style ="margin-top: 20px">Remove</button>
+			  <input type="submit" class="btn btn-default" style ="margin-top: 20px" name="submit" value="Delete" />
 			</form>
 		</div>		
 	<!-- END Registration Form -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
   </body>
 </html>
