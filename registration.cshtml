@@ -8,13 +8,39 @@
     var userNameReg = Request.Form["Username1"];
     var passwordReg = Request.Form["Password1"];
     var passwordConfReg = Request.Form["confirmPassword1"];
-    var emailReg = Request.Form["Email1"]; 
+    var emailReg = Request.Form["Email1"];
+    bool valid = true; 
     
     if (IsPost && Validation.IsValid())
     {
         if (ModelState.IsValid)
         {
-            if (passwordReg == passwordConfReg) 
+            if (userNameReg[0] != 'C') {
+                valid = false;
+                ModelState.AddError("CStart", "Usernames must start with a capital C.");
+            }
+            if (passwordReg != passwordConfReg) {
+                valid = false;
+                ModelState.AddError("NoPassMatch", "The passwords you entered do not match, please try again.");
+            }
+            int n;
+            var temp = userNameReg.Substring(1);
+            bool isNumeric = int.TryParse(temp, out n);
+            if (isNumeric == false) {
+                valid = false;
+                ModelState.AddError("NonNumeric", "Username can only contain a C followed by numeric values.");
+            }
+            var row = db.QuerySingle("SELECT password FROM Customer WHERE cusername = @0", userNameReg);
+            if (row != null) {
+                valid = false;
+                ModelState.AddError("ExistingUser", "This Username has already been taken, please try again.");
+            }
+            var row2 = db.QuerySingle("SELECT email FROM Customer WHERE email = @0", emailReg);
+            if (row2 != null) {
+                valid = false;
+                ModelState.AddError("ExistingEmail", "This Email has already been registered, please try again.");
+            }
+            if (valid) 
             {
                 var insertQuery = "INSERT INTO Customer (cusername, password, email) " +
                     "VALUES (@0, @1, @2)";
@@ -22,10 +48,6 @@
                 db.Close();
                 Response.Redirect("~/Default");
             } 
-            else if (passwordReg != passwordConfReg)
-            {
-               ModelState.AddError("Bad2Pass", "The passwords were not the same. Please try again.");
-            }
         }
     }
 }
