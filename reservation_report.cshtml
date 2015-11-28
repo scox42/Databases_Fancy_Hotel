@@ -1,5 +1,4 @@
 ﻿@{
-    //var db = Database.Open("cs4400_Group_86");
     var queryString = "SELECT monthname(start) AS Month, location AS Location, count(start) AS Reservations FROM Reservation " +
         "NATURAL JOIN ReservationHasRoom GROUP BY month(start), location ORDER BY month(start)";
 }
