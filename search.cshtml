@@ -1,4 +1,22 @@
-﻿<!DOCTYPE html>
+﻿@{
+    List<dynamic> openRooms = new List<dynamic>();
+    
+    if(IsPost)
+    {
+        var db = Database.Open("cs4400_Group_86");
+        
+        foreach(var row in db.Query("SELECT * FROM Room WHERE location = @0", Request["location"]))
+        {
+            var usedRoom = db.QuerySingle("SELECT start, end, roomNum, location FROM Reservation NATURAL JOIN ReservationHasRoom " + 
+                "WHERE cancelled = 0 AND location = @0 AND roomNum = @1", Request["location"], row.roomNum);
+            if (usedRoom != null && (DateTime.Parse(Request["startDate"]) > usedRoom.end || DateTime.Parse(Request["endDate"]) < usedRoom.start))
+            {
+                openRooms.Add(db.QuerySingle("SELECT * FROM Room WHERE location = @0 AND roomNum = @1", Request["location"], row.roomNum));
+            }
+        }
+    }
+}
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -13,7 +31,8 @@
  	  <!-- Searcg Page -->
     <div class="section">
   		<h3 class="center">Search for the room of your dreams</h3>
-        <select class="form-control" style="margin-top: 20px">
+        <form method="post">
+        <select class="form-control" style="margin-top: 20px" name="location">
           <option value="Atlanta">Atlanta</option>
           <option value="Charlotte">Charlotte</option>
           <option value="Savannah">Savannah</option>
@@ -21,13 +40,46 @@
           <option value="Miami">Miami</option>
         </select>
       <div class="input-group input-daterange" style="margin-top: 20px">
-          <input type="date" class="form-control" value="2015-12-03">
+          <input type="date" class="form-control" value="2015-12-03" name="startDate">
           <span class="input-group-addon">to</span>
-          <input type="date" class="form-control" value="2015-12-04">
+          <input type="date" class="form-control" value="2015-12-04" name="endDate">
       </div>
-      <button type="submit" class="btn btn-default" style="margin-top: 20px">Submit</button>
+      <input type="submit" class="btn btn-default" style="margin-top: 20px"/>
+    </form>
     </div>
-
+    <div>
+        <table>
+            <thead>
+                <tr >
+                    <th><h2>Location: @Request["location"]</h2></th>
+                </tr>
+                <tr>
+                    <th>Room #</th>
+                    <th>Category</th>
+                    <th># people allowed</th>
+                    <th>Cost per Day</th>
+                    <th>Extra Bed (per Day)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in openRooms)
+                {
+                    <tr>
+                        <td>@row.roomNum</td>
+                        <td>@row.category</td>
+                        <td>@row.numPeople</td>
+                        <td>@row.costPerDay</td>
+                        <td>@row.ExtraBedCost</td>
+                        <td><a href="~/make_reservation/@Request["location"]/@row.roomNum">Book This Room</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    
+    
+      
+      
     <!-- END Search Page -->
 	  </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
