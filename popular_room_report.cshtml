@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var queryString = "SELECT monthText, location, MAX(ResCount) AS reservationCount, category FROM " + 
+    "(SELECT monthname(start) AS monthText, category, location, COUNT(category) AS ResCount FROM " + 
+    "Reservation NATURAL JOIN ReservationHasRoom NATURAL JOIN Room GROUP BY category, location ORDER BY month(start)) AS ResCounter " +
+    "GROUP BY location"; //Not finished, needs to show all months.
+}
+
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -17,9 +24,23 @@
         <tr>
           <th>Month</th>
           <th>Top Room Category</th>
-          <th>Locaiton</th>
-          <th>Total Number of Reservations for Room Category</th>
+          <th>Location</th>
+          <th># of Reservations for Category</th>
         </tr>
+          <tbody>
+            @using(var db = Database.Open("cs4400_Group_86"))
+            {
+                foreach (var row in db.Query(queryString))
+                {
+                    <tr>
+                        <td>@row.monthText</td>
+                        <td>@row.category</td>
+                        <td>@row.location</td>
+                        <td>@row.reservationCount</td>
+                    </tr>
+                }
+            }
+          </tbody>
       </table>   
     </div>	
 	<!-- END View Reservation Table -->
