@@ -17,12 +17,12 @@
  	  <div class="section">
       <h3 class="center">Your reservations:</h3>
       <table id="table-3">
-        <thead>
+        <tr>
             <th>Reservation ID</th>
             <th>Start Date</th>
             <th>End Date</th>
             <th>Total Cost</th>
-        </thead>
+        </tr>
         <tbody>
             @using (var db = Database.Open("cs4400_Group_86"))
             {
