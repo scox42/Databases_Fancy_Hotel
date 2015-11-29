@@ -13,9 +13,9 @@
  	  <!-- Choose Location -->
 		<div class="section">
 	  	<h3 class="center">View a Hotel</h3>
-		  <form>
+		  <form method="post">
 			  <div class="form-group">
-				<select class="form-control" style="max-width: 33%">
+				<select class="form-control" style="max-width: 33%" name="location">
 	                <option value="Atlanta">Atlanta</option>
 	                <option value="Charlotte">Charlotte</option>
 	                <option value="Savannah">Savannah</option>
@@ -28,16 +28,51 @@
 		</div>		
 	<!-- END Choose Location -->
 
-	 	<!-- View Feedback Table -->
-		<div class="section hidden">
-        <h3 class="center">Feedback:</h3>
-      <table id="table-3">
-        <tr>
-          <th>Rating</th>
-          <th>Comment</th>
-        </tr>
-      </table>   
-    </div>	
+	 	@{
+            if (IsPost)
+            {
+                <div>
+                    <h3 class="center">Feedback:</h3>
+                    <table id="table-3">
+                        <tr>
+                          <th><strong>Rating</strong></th>
+                          <th><strong>Comment</strong></th>
+                        </tr>
+                        <tbody>
+                          @using (var db = Database.Open("cs4400_Group_86"))
+                          {
+                              foreach (var row in db.Query("SELECT rating, comment FROM HotelReview WHERE location = @0", Request["location"]))
+                              {
+                                  string rating = "";
+                                  switch ((int)row.rating)
+                                  {
+                                    case 1:
+                                        rating = "Very Bad";
+                                        break;
+                                    case 2:
+                                        rating = "Bad";
+                                        break;
+                                    case 3:
+                                          rating = "Neutral";
+                                          break;
+                                    case 4:
+                                          rating = "Good";
+                                          break;
+                                    case 5:
+                                          rating = "Excellent";
+                                          break;
+                                  }
+                                  <tr>
+                                    <td>@rating</td>
+                                    <td>@row.comment</td>
+                                  </tr>
+                              }
+                          }
+                        </tbody>
+                    </table>   
+                </div>
+            }
+        }	
 	<!-- END View Feedback Table -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>

@@ -37,7 +37,7 @@
                             <td>@row.end</td>
                             <td>@row.cost</td>
                             @{
-                                if (pastDate)
+                                if (!pastDate)
                                 {
                                     <td><a href="~/edit_reservation/@row.reservationID">Edit Reservation</a></td>
                                 }
