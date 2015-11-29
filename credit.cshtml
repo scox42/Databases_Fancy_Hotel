@@ -1,22 +1,25 @@
 ﻿@{
-    //Validation.RequireFields("name", "cardNum", "expDate", "cvv");
-    Validation.RequireField("cardName", "Name can't be empty");
-    //Validation.Add("cardNum", Validator.Regex("^\\d{16}$", "Credit Card Number must be 16 digits"));    
-
-    if(IsPost)
+    Validation.RequireField("cardName", "Name on Card is required");
+    Validation.RequireField("cardNum", "Credit Card Number is required");
+    Validation.RequireField("cvv", "Card Verification Value (CVV) is required");
+    Validation.RequireField("expDate", "Expiration Date is required");
+    Validation.Add("cardNum", Validator.Regex("^\\d{16}$", "Credit Card Number must be 16 digits"));
+      
+    if(IsPost && Validation.IsValid() && Request["submit"] == "Insert")
     {
-        if (Request["submit"] == "Insert")
+        using (var db = Database.Open("cs4400_Group_86"))
         {
-
+            db.Execute("INSERT INTO PaymentInfo (CUserName, cardNum, cvv, expiration, name) VALUES (@0, @1, @2, @3, @4)",
+                Request.Cookies["UserName"].Value, Request.Form["cardNum"], Request.Form["cvv"], Request.Form["expDate"], Request.Form["cardName"]);
         }
-        else if (Request["submit"] == "Delete")
+    }
+    else if (IsPost && Request["submit"] == "Delete")
+    {
+        using (var db = Database.Open("cs4400_Group_86"))
         {
-            using (var db = Database.Open("cs4400_Group_86"))
-            {
-                db.Execute("DELETE FROM PaymentInfo WHERE cardNum = @0", Request["cardList"]);
-                
-            }
+            db.Execute("DELETE FROM PaymentInfo WHERE cardNum = @0", Request["cardList"]);
         }
+        Response.Redirect("~/credit");
     }
 }
 <!DOCTYPE html>
@@ -51,7 +54,7 @@
 			    <label for="examplePassword1">CVV</label>
 			    <input type="text" class="form-control" id="cvv" name="cvv" placeholder="CVV" />
 			  </div>
-			  <input type="submit" class="btn btn-default" value="Insert" />
+			  <input type="submit" class="btn btn-default" name="submit" value="Insert" />
               @Html.ValidationSummary(false)
 			</form>
 		</div>
@@ -72,6 +75,7 @@
                      }
 	            </select>
               </div>
+                @Request["cardList"]
 			  <input type="submit" class="btn btn-default" style ="margin-top: 20px" name="submit" value="Delete" />
 			</form>
 		</div>		
