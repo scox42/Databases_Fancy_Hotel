@@ -1,0 +1,63 @@
+﻿@{
+    string queryString = "SELECT reservationID, start, end, cost, cancelled FROM Reservation WHERE CUserName = @0 ORDER BY start DESC";
+}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Update a Reservation</title>
+    <link href='http://fonts.googleapis.com/css?family=Comfortaa:400,700,300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/FancyHotelsIndex.css">
+  </head>
+  <body>
+ 	  <!-- Look up -->
+ 	  <div class="section">
+      <h3 class="center">Your reservations:</h3>
+      <table>
+        <thead>
+            <th>Reservation ID</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Total Cost</th>
+        </thead>
+        <tbody>
+            @using (var db = Database.Open("cs4400_Group_86"))
+            {
+                foreach(var row in db.Query(queryString, Request.Cookies["UserName"].Value))
+                {
+                    if (!row.cancelled)
+                    {
+                        bool pastDate = row.start < DateTime.Today;
+                        <tr @Html.Raw(pastDate ? "style='background-color: #C0C0C0'" : "")>
+                            <td>@row.reservationID</td>
+                            <td>@row.start</td>
+                            <td>@row.end</td>
+                            <td>@row.cost</td>
+                            @{
+                                if (pastDate)
+                                {
+                                    <td><a href="~/edit_reservation/@row.reservationID">Edit Reservation</a></td>
+                                }
+                                else
+                                {
+                                    <td><a href="~/give_review/@row.reservationID">Give Review</a></td>
+                                }
+                            }
+                        </tr>
+                    }                      
+                }
+            }
+        </tbody>
+      </table>
+    </div>
+    <!-- END Look up -->
+
+
+    <!-- END Availibilities -->    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  </body>
+</html>
