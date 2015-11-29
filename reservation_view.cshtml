@@ -16,7 +16,7 @@
  	  <!-- Look up -->
  	  <div class="section">
       <h3 class="center">Your reservations:</h3>
-      <table>
+      <table id="table-3">
         <thead>
             <th>Reservation ID</th>
             <th>Start Date</th>
@@ -37,7 +37,7 @@
                             <td>@row.end</td>
                             <td>@row.cost</td>
                             @{
-                                if (pastDate)
+                                if (!pastDate)
                                 {
                                     <td><a href="~/edit_reservation/@row.reservationID">Edit Reservation</a></td>
                                 }
