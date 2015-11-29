@@ -1,4 +1,43 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var location = "";
+
+    using(var db = Database.Open("cs4400_Group_86"))
+    {
+        location = db.QuerySingle("SELECT location FROM ReservationHasRoom WHERE reservationID = @0", UrlData.First()).location;
+    }
+       
+    if (IsPost)
+    {
+        var rating = 0;
+        switch(Request["rating"])
+        {
+            case "Excellent":
+                rating = 5;
+                break;
+            case "Good":
+                rating = 4;
+                break;
+            case "Neutral":
+                rating = 3;
+                break;
+            case "Bad":
+                rating = 2;
+                break;
+            case "Very Bad":
+                rating = 1;
+                break;
+        }
+
+        using(var db = Database.Open("cs4400_Group_86"))
+        {
+            db.Execute("INSERT INTO HotelReview (CUserName, location, rating, comment) VALUES (@0, @1, @2, @3)",
+                Request.Cookies["UserName"].Value, location, rating, Request["Comment"]);
+            db.Execute("UPDATE Reservation SET ReviewGiven = 1 WHERE reservationID = @0", UrlData.First());
+        }
+        Response.Redirect("~/reservation_view");
+    }
+}
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -12,18 +51,12 @@
   <body>
  	  <!-- Submit Feedback Form -->
 		<div class="aform moveup">
-		  <form>
-			  <div class="form-group">
-          <h3 class="center">Which location did you visit?</h3>
-					<select class="form-control">
-	            <option value="Atlanta">Atlanta</option>
-	            <option value="Charlotte">Charlotte</option>
-	            <option value="Savannah">Savannah</option>
-	            <option value="Orlando">Orlando</option>
-	            <option value="Miami">Miami</option>
+		  <form method="post">
+		    <div class="form-group">
+            <h3 class="center">Location visited: @location</h3>
 	        </select>
           <h3 class="center">How would you rate it?</h3>
-          <select class="form-control">
+          <select class="form-control" name="rating">
               <option value="Excellent">Excellent</option>
               <option value="Good">Good</option>
               <option value="Neutral">Neutral</option>
@@ -32,8 +65,8 @@
           </select>
             </div>
           <h3 class="center">Comment:</h3>
-          <textarea class="form-control" rows="5" id="comment"></textarea>
-			  <button type="submit" class="btn btn-default" style ="margin-top: 20px">Submit Review</button>
+          <textarea class="form-control" rows="5" id="comment" name="comment"></textarea>
+			  <input type="submit" class="btn btn-default" style ="margin-top: 20px" value="Submit Review" />
 			</form>
 		</div>		
 	<!-- END Submit Feedback Form -->

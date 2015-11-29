@@ -1,5 +1,5 @@
 ﻿@{
-    string queryString = "SELECT reservationID, start, end, cost, cancelled FROM Reservation WHERE CUserName = @0 ORDER BY start DESC";
+    string queryString = "SELECT * FROM Reservation WHERE CUserName = @0 ORDER BY start DESC";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -43,7 +43,14 @@
                                 }
                                 else
                                 {
-                                    <td><a href="~/give_review/@row.reservationID">Give Review</a></td>
+                                    if(!row.ReviewGiven)
+                                    {
+                                        <td><a href="~/give_review/@row.reservationID">Give Review</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td>Review Already Given</td>
+                                    }
                                 }
                             }
                         </tr>
