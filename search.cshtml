@@ -9,7 +9,8 @@
         {
             var usedRoom = db.QuerySingle("SELECT start, end, roomNum, location FROM Reservation NATURAL JOIN ReservationHasRoom " + 
                 "WHERE cancelled = 0 AND location = @0 AND roomNum = @1", Request["location"], row.roomNum);
-            if (usedRoom != null && (DateTime.Parse(Request["startDate"]) > usedRoom.end || DateTime.Parse(Request["endDate"]) < usedRoom.start))
+            if (usedRoom != null && (DateTime.Parse(Request["startDate"]) > usedRoom.end || DateTime.Parse(Request["endDate"]) < usedRoom.start
+            && DateTime.Parse(Request["startDate"]) > DateTime.Now))
             {
                 openRooms.Add(db.QuerySingle("SELECT * FROM Room WHERE location = @0 AND roomNum = @1", Request["location"], row.roomNum));
             }
@@ -51,7 +52,9 @@
         <table>
             <thead>
                 <tr >
-                    <th><h2>Location: @Request["location"]</h2></th>
+                    <th><h2>Location: @Request["location"]</h2>
+                    <p>Start Date: @Request["startDate"]</p>
+                    <p>End Date: @Request["endDate"]</p></th>
                 </tr>
                 <tr>
                     <th>Room #</th>
