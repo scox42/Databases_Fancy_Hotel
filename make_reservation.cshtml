@@ -16,6 +16,7 @@
 
     if (IsPost && Request["submit"] == "Confirm")
     {
+        var valid = 1;
         if (!Request["roomField"].IsEmpty())
         {
             rooms = Request["roomField"];
@@ -24,11 +25,15 @@
         {
             beds = Request["bedField"];
         }
+        if (Request["cardList"].IsEmpty())
+        {
+            valid = 0;
+        }
         roomList = new List<string>(rooms.Split(new char[]{','}));
         bedList = new List<string>(beds.Split(new char[]{','}));
 
         var db = Database.Open("cs4400_Group_86");
-
+        if (valid == 1) { 
         db.Execute("INSERT INTO Reservation (CUserName, cardNum, start, end, cost) VALUES (@0, @1, @2, @3, @4)",
             Request.Cookies["UserName"].Value, Request["cardList"], Request.Cookies["startDate"].Value, Request.Cookies["endDate"].Value, Request["total"]);
         var reservationID = db.QuerySingle("SELECT LAST_INSERT_ID() AS id").id;
@@ -41,6 +46,7 @@
             }
             db.Execute("INSERT INTO ReservationHasRoom (reservationID, extraBedFlag, roomNum, location) VALUES (@0, @1, @2, @3)",
                 reservationID, extraBedFlag, room, Request["location"]);
+        }
         }
         db.Close();
         Response.Redirect("~/reservation_view");
