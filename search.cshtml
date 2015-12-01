@@ -1,12 +1,13 @@
 ﻿@{
     List<dynamic> openRooms = new List<dynamic>();
     
-    if(IsPost)
+    if(IsPost && Request["submit"] == "Search")
     {
         var db = Database.Open("cs4400_Group_86");
         
         foreach(var row in db.Query("SELECT * FROM Room WHERE location = @0", Request["location"]))
         {
+            //BUG: misses Atlanta 102, a cancelled res
             var usedRoom = db.QuerySingle("SELECT start, end, roomNum, location FROM Reservation NATURAL JOIN ReservationHasRoom " + 
                 "WHERE cancelled = 0 AND location = @0 AND roomNum = @1", Request["location"], row.roomNum);
             if (usedRoom != null && (DateTime.Parse(Request["startDate"]) > usedRoom.end || DateTime.Parse(Request["endDate"]) < usedRoom.start))
@@ -44,45 +45,53 @@
           <span class="input-group-addon">to</span>
           <input type="date" class="form-control" value="2015-12-04" name="endDate">
       </div>
-      <input type="submit" class="btn btn-default" style="margin-top: 20px"/>
+      <input type="submit" class="btn btn-default" style="margin-top: 20px" name="submit" value="Search"/>
     </form>
     </div>
     <div>
-        <table>
-            <thead>
-                <tr >
-                    <th><h2>Location: @Request["location"]</h2></th>
-                </tr>
-                <tr>
-                    <th>Room #</th>
-                    <th>Category</th>
-                    <th># people allowed</th>
-                    <th>Cost per Day</th>
-                    <th>Extra Bed (per Day)</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var row in openRooms)
-                {
-                    <tr>
-                        <td>@row.roomNum</td>
-                        <td>@row.category</td>
-                        <td>@row.numPeople</td>
-                        <td>@row.costPerDay</td>
-                        <td>@row.ExtraBedCost</td>
-                        <td><a href="~/make_reservation/@Request["location"]/@row.roomNum">Book This Room</a></td>
+        <form method="post" action="~/make_reservation">
+            <input type="hidden" name="location" value="@Request["location"]" />
+            <table>
+                <thead>
+                    <tr >
+                        <th><h2>Location: @Request["location"]</h2></th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    
-    
-      
+                    <tr>
+                        <th>Select Room</th>
+                        <th>Room #</th>
+                        <th>Category</th>
+                        <th># people allowed</th>
+                        <th>Cost per Day</th>
+                        <th>Extra Bed (per Day)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in openRooms)
+                    {
+                        <tr> 
+                            <td><input type="checkbox" name="Rooms" value="@row.roomNum" /></td>
+                            <td>@row.roomNum</td>
+                            <td>@row.category</td>
+                            <td>@row.numPeople</td>
+                            <td>@row.costPerDay</td>
+                            <td>@row.ExtraBedCost <input type="checkbox" name="ExtraBed" value="@row.roomNum" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <input type="submit" name="submit" value="Book"/>
+         </form>
+    </div>      
       
     <!-- END Search Page -->
 	  </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function()
+        {
+            
+        })
+    </script>
   </body>
 </html>
