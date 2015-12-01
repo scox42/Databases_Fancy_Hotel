@@ -5,7 +5,7 @@
     Validation.RequireField("expDate", "Expiration Date is required");
     Validation.Add("cardNum", Validator.Regex("^\\d{16}$", "Credit Card Number must be 16 digits"));
       
-    if(IsPost && Validation.IsValid() && Request["submit"] == "Insert")
+    if(IsPost && Validation.IsValid() && Request["submit"] == "Insert" && DateTime.Parse(Request.Form["expDate"]) > DateTime.Now)
     {
         using (var db = Database.Open("cs4400_Group_86"))
         {
