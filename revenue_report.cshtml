@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var queryString = "SELECT MONTHNAME(START) AS MONTH , location, SUM(cost) AS Total FROM Reservation " +
+        "NATURAL JOIN ReservationHasRoom NATURAL JOIN Room GROUP BY location, MONTHNAME(START) ORDER BY MONTH(START)," +
+        "location";
+}
+
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -19,6 +25,19 @@
           <th>Location</th>
           <th>Total Revenue</th>
         </tr>
+          <tbody>
+            @using(var db = Database.Open("cs4400_Group_86"))
+            {
+                foreach (var row in db.Query(queryString))
+                {
+                    <tr>
+                        <td>@row.MONTH</td>
+                        <td>@row.location</td>
+                        <td>@row.Total</td>
+                    </tr>
+                }
+            }
+          </tbody>
       </table>   
     </div>	
 	<!-- END View Revenue Table -->
