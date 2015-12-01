@@ -1,6 +1,6 @@
 ﻿@{
-    var queryString = "SELECT DISTINCT roomNum, category, numPeople, costPerDay, ExtraBedCost FROM Reservation NATURAL JOIN ReservationHasRoom NATURAL JOIN Room " +
-        "WHERE Room.roomNum NOT IN (SELECT Room.roomNum FROM Reservation NATURAL JOIN ReservationHasRoom NATURAL JOIN Room " + 
+    var queryString = "SELECT DISTINCT roomNum, category, numPeople, costPerDay, ExtraBedCost FROM Reservation NATURAL JOIN ReservationHasRoom NATURAL RIGHT OUTER JOIN Room " +
+        "WHERE Room.roomNum NOT IN (SELECT Room.roomNum FROM Reservation NATURAL JOIN ReservationHasRoom NATURAL RIGHT OUTER JOIN Room " + 
                 "WHERE (END >  @0 AND START < @1 AND cancelled = 0 AND location = @2)) " + 
         "AND location = @2 ORDER BY Room.roomNum";
 }
