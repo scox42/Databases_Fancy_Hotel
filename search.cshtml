@@ -1,22 +1,8 @@
 ﻿@{
-    List<dynamic> openRooms = new List<dynamic>();
-    
-    if(IsPost && Request["submit"] == "Search")
-    {
-        var db = Database.Open("cs4400_Group_86");
-        
-        foreach(var row in db.Query("SELECT * FROM Room WHERE location = @0", Request["location"]))
-        {
-            //BUG: misses Atlanta 102, a cancelled res
-            var usedRoom = db.QuerySingle("SELECT start, end, roomNum, location FROM Reservation NATURAL JOIN ReservationHasRoom " + 
-                "WHERE cancelled = 0 AND location = @0 AND roomNum = @1", Request["location"], row.roomNum);
-            if (usedRoom != null && (DateTime.Parse(Request["startDate"]) > usedRoom.end || DateTime.Parse(Request["endDate"]) < usedRoom.start
-            && DateTime.Parse(Request["startDate"]) > DateTime.Now))
-            {
-                openRooms.Add(db.QuerySingle("SELECT * FROM Room WHERE location = @0 AND roomNum = @1", Request["location"], row.roomNum));
-            }
-        }
-    }
+    var queryString = "SELECT DISTINCT roomNum, category, numPeople, costPerDay, ExtraBedCost FROM Reservation NATURAL JOIN ReservationHasRoom NATURAL JOIN Room " +
+        "WHERE Room.roomNum NOT IN (SELECT Room.roomNum FROM Reservation NATURAL JOIN ReservationHasRoom NATURAL JOIN Room " + 
+                "WHERE (END >  @0 AND START < @1 AND cancelled = 0 AND location = @2)) " + 
+        "AND location = @2 ORDER BY Room.roomNum";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -58,6 +44,9 @@
                         <th><h2>Location: @Request["location"]</h2></th>
                     </tr>
                     <tr>
+                        <th>Dates: @Request["startDate"] to @Request["endDate"]</th>
+                    </tr>
+                    <tr>
                         <th>Select Room</th>
                         <th>Room #</th>
                         <th>Category</th>
@@ -67,16 +56,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var row in openRooms)
-                    {
-                        <tr> 
-                            <td><input type="checkbox" name="Rooms" value="@row.roomNum" /></td>
-                            <td>@row.roomNum</td>
-                            <td>@row.category</td>
-                            <td>@row.numPeople</td>
-                            <td>@row.costPerDay</td>
-                            <td>@row.ExtraBedCost <input type="checkbox" name="ExtraBed" value="@row.roomNum" /></td>
-                        </tr>
+                    @{
+                        if(IsPost && Request["submit"] == "Search")
+                        {
+                            using (var db = Database.Open("cs4400_Group_86"))
+                            {
+                                foreach(var row in db.Query(queryString, Request["startDate"], Request["endDate"], Request["location"]))
+                                {
+                                    <tr> 
+                                        <td><input type="checkbox" name="Rooms" value="@row.roomNum" /></td>
+                                        <td>@row.roomNum</td>
+                                        <td>@row.category</td>
+                                        <td>@row.numPeople</td>
+                                        <td>@row.costPerDay</td>
+                                        <td>@row.ExtraBedCost <input type="checkbox" name="ExtraBed" value="@row.roomNum" /></td>
+                                    </tr>
+                                }
+                            }
+                        }
                     }
                 </tbody>
             </table>
