@@ -61,16 +61,18 @@
                         {
                             using (var db = Database.Open("cs4400_Group_86"))
                             {
-                                foreach(var row in db.Query(queryString, Request["startDate"], Request["endDate"], Request["location"]))
-                                {
-                                    <tr> 
-                                        <td><input type="checkbox" name="Rooms" value="@row.roomNum" /></td>
-                                        <td>@row.roomNum</td>
-                                        <td>@row.category</td>
-                                        <td>@row.numPeople</td>
-                                        <td>@row.costPerDay</td>
-                                        <td>@row.ExtraBedCost <input type="checkbox" name="ExtraBed" value="@row.roomNum" /></td>
-                                    </tr>
+                                if (DateTime.Parse(Request["startDate"]) > DateTime.Now && DateTime.Parse(Request["endDate"]) > DateTime.Now) {
+                                    foreach(var row in db.Query(queryString, Request["startDate"], Request["endDate"], Request["location"]))
+                                    {
+                                        <tr> 
+                                            <td><input type="checkbox" name="Rooms" value="@row.roomNum" /></td>
+                                            <td>@row.roomNum</td>
+                                            <td>@row.category</td>
+                                            <td>@row.numPeople</td>
+                                            <td>@row.costPerDay</td>
+                                            <td>@row.ExtraBedCost <input type="checkbox" name="ExtraBed" value="@row.roomNum" /></td>
+                                        </tr>
+                                    }
                                 }
                             }
                         }
