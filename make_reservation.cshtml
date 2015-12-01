@@ -2,7 +2,8 @@
     string rooms = "";
     string beds = "";
     decimal totalCost = 0.00M;
-  
+    TimeSpan dayCount = DateTime.Parse(Request.Cookies["endDate"].Value) - DateTime.Parse(Request.Cookies["startDate"].Value);
+
     if (!Request["Rooms"].IsEmpty())
     {
         rooms = Request["Rooms"];
@@ -78,6 +79,7 @@
                     </tr>
                     <tr>
                         <th>Room #</th>
+                        <th>Total # Days:</th>
                         <th>Extra Bed</th>
                         <th>Category</th>
                         <th>Total Cost:</th>
@@ -89,12 +91,13 @@
                         using (var db = Database.Open("cs4400_Group_86"))
                         {
                             var roomLine = db.QuerySingle("SELECT costPerDay, extraBedCost, category FROM Room WHERE roomNum = @0", room);
-                            var roomCost = roomLine.costPerDay;
+                            var roomCost = roomLine.costPerDay * dayCount.Days;
                             <tr>
                                 <td>@room</td>
+                                <td>@dayCount.Days</td>
                                 @if(bedList.Exists(r => r == room))
                                 {
-                                    roomCost += roomLine.extraBedCost;
+                                    roomCost += roomLine.extraBedCost * dayCount.Days;
                                     <td>$@roomLine.extraBedCost</td>
                                 }
                                 else
@@ -108,6 +111,7 @@
                         }
                     }
                     <tr>
+                        <td></td>
                         <td></td>
                         <td><b>Total Reservation Cost: </b></td>
                         <td></td>
