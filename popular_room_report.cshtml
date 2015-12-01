@@ -1,8 +1,9 @@
 ﻿@{
-    var queryString = "SELECT monthText, location, MAX(ResCount) AS reservationCount, category FROM " + 
-    "(SELECT monthname(start) AS monthText, category, location, COUNT(category) AS ResCount FROM " + 
-    "Reservation NATURAL JOIN ReservationHasRoom NATURAL JOIN Room GROUP BY category, location ORDER BY month(start)) AS ResCounter " +
-    "GROUP BY location"; //Not finished, needs to show all months.
+    var queryString = "SELECT b.month AS month, b.location AS location, b.category AS category, MAX(b.ResSum) AS Total " +
+    "FROM (SELECT a.month, a.location, a.category, SUM(a.ResCount) AS ResSum " +
+    "FROM (SELECT MONTHNAME(START) AS MONTH , location, category, COUNT( category ) AS ResCount " +
+    "FROM Reservation NATURAL JOIN ReservationHasRoom NATURAL JOIN Room WHERE cancelled = 0 GROUP BY location, MONTHNAME(START) , category " +
+    "ORDER BY MONTHNAME(START) , location, category)a GROUP BY a.month, a.location, a.category)b GROUP BY b.month, b.location";
 }
 
 <!DOCTYPE html>
@@ -33,10 +34,10 @@
                 foreach (var row in db.Query(queryString))
                 {
                     <tr>
-                        <td>@row.monthText</td>
+                        <td>@row.month</td>
                         <td>@row.category</td>
                         <td>@row.location</td>
-                        <td>@row.reservationCount</td>
+                        <td>@row.Total</td>
                     </tr>
                 }
             }
