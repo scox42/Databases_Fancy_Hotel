@@ -36,6 +36,9 @@
                         <th><h2>Location: @Request["location"]</h2></th>
                     </tr>
                     <tr>
+                        <th>Dates: @Request.Cookies["startDate"].Value to @Request.Cookies["endDate"].Value</th>
+                    </tr>
+                    <tr>
                         <th>Room #</th>
                         <th>Extra Bed</th>
                         <th>Category</th>
