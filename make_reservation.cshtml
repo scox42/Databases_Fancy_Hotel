@@ -1,6 +1,7 @@
 ﻿@{
     string rooms = "";
     string beds = "";
+    decimal totalCost = 0.00M;
   
     if (!Request["Rooms"].IsEmpty())
     {
@@ -28,6 +29,7 @@
     <body>
         <h1>Confirm Reservation</h1>
         <div>
+            <form method="post">
             <table>
                 <thead>
                     <tr>
@@ -43,32 +45,56 @@
                 <tbody>
                     @foreach(string room in roomList)
                     {
-                        <tr>
-                            <td>@room</td>
-                            @if(bedList.Exists(r => r == room))
-                            {
-                                <td>X</td>
-                            }
-                            else
-                            {
-                                <td></td>
-                            }
-                            <td>Some Category</td>
-                            <td>TBD</td>
-                        </tr>
+                        using (var db = Database.Open("cs4400_Group_86"))
+                        {
+                            var roomLine = db.QuerySingle("SELECT costPerDay, extraBedCost, category FROM Room WHERE roomNum = @0", room);
+                            var roomCost = roomLine.costPerDay;
+                            <tr>
+                                <td>@room</td>
+                                @if(bedList.Exists(r => r == room))
+                                {
+                                    roomCost += roomLine.extraBedCost;
+                                    <td><strong>$@roomLine.extraBedCost</strong></td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                <td>@roomLine.category</td>
+                                <td>$@roomCost</td>
+                            </tr>
+                            totalCost += roomCost;
+                        }
                     }
                     <tr>
                         <td></td>
-                        <td>Total Reservation Cost:</td>
+                        <td>Total Reservation Cost: </td>
                         <td></td>
-                        <td>TBD</td>
+                        <td>$@totalCost</td>
                     </tr>
                 </tbody>
-            
-            
+                <tfoot>
+                    <tr>
+                        <td><input type="submit" name="submit" value="Confirm" /></td>
+                        <td>Pay using:</td>
+                        <td>
+                            <select class="form-control" name="cardList">
+	                            @using (var db = Database.Open("cs4400_Group_86"))
+                                 {
+                                    foreach (var row in db.Query("SELECT cardNum FROM PaymentInfo WHERE CUserName = @0", Request.Cookies["UserName"].Value))
+                                    {
+                                        string lastFour = row.cardNum.ToString();
+                                        lastFour = "xxxx xxxx xxxx " + lastFour.Substring(lastFour.Length - 4);
+                                        <option value="@row.cardNum.ToString()">@lastFour</option>
+                                    }
+                                 }
+	                        </select>
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
+            </form>
         </div>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     </body>
