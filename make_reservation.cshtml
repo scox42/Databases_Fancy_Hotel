@@ -13,6 +13,38 @@
     }
     List<string> roomList = new List<string>(rooms.Split(new char[]{','}));
     List<string> bedList = new List<string>(beds.Split(new char[]{','}));
+
+    if (IsPost && Request["submit"] == "Confirm")
+    {
+        if (!Request["roomField"].IsEmpty())
+        {
+            rooms = Request["roomField"];
+        }
+        if (!Request["bedField"].IsEmpty())
+        {
+            beds = Request["bedField"];
+        }
+        roomList = new List<string>(rooms.Split(new char[]{','}));
+        bedList = new List<string>(beds.Split(new char[]{','}));
+
+        var db = Database.Open("cs4400_Group_86");
+
+        db.Execute("INSERT INTO Reservation (CUserName, cardNum, start, end, cost) VALUES (@0, @1, @2, @3, @4)",
+            Request.Cookies["UserName"].Value, Request["cardList"], Request.Cookies["startDate"].Value, Request.Cookies["endDate"].Value, Request["total"]);
+        var reservationID = db.QuerySingle("SELECT LAST_INSERT_ID() AS id").id;
+        foreach (string room in roomList)
+        {
+            var extraBedFlag = 0;
+            if(bedList.Exists(r => r == room))
+            {
+                extraBedFlag = 1;
+            }
+            db.Execute("INSERT INTO ReservationHasRoom (reservationID, extraBedFlag, roomNum, location) VALUES (@0, @1, @2, @3)",
+                reservationID, extraBedFlag, room, Request["location"]);
+        }
+        db.Close();
+        Response.Redirect("~/reservation_view");
+    }
 }
 <!DOCTYPE html>
 
@@ -57,7 +89,7 @@
                                 @if(bedList.Exists(r => r == room))
                                 {
                                     roomCost += roomLine.extraBedCost;
-                                    <td><strong>$@roomLine.extraBedCost</strong></td>
+                                    <td>$@roomLine.extraBedCost</td>
                                 }
                                 else
                                 {
@@ -71,7 +103,7 @@
                     }
                     <tr>
                         <td></td>
-                        <td>Total Reservation Cost: </td>
+                        <td><b>Total Reservation Cost: </b></td>
                         <td></td>
                         <td>$@totalCost</td>
                     </tr>
@@ -93,9 +125,14 @@
                                  }
 	                        </select>
                         </td>
+                        <td><a href="~/credit">Modify Payment Options</a></td>
                     </tr>
                 </tfoot>
             </table>
+            <input type="hidden" name="total" value="@totalCost" />
+            <input type="hidden" name="location" value="@Request["location"]" />
+            <input type="hidden" name="roomField" value="@Request["Rooms"]" />
+            <input type="hidden" name="bedField" value="@Request["ExtraBed"]" />
             </form>
         </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
