@@ -1,10 +1,24 @@
 ﻿@{
+    var StartDate = "";
+    var currentDate = DateTime.Now;
+    using(var db = Database.Open("cs4400_Group_86"))
+    {
+        StartDate = db.QuerySingle("SELECT start FROM Reservation WHERE reservationID = @0", UrlData.First());
+    }
+    var DateDiff = (currentDate - DateTime.Parse(StartDate)).TotalDays;
+    var reservationStartDate = "SELECT start FROM Reservation WHERE reservationID = @0";
     var queryAvailable = "SELECT DISTINCT roomNum, category, numPeople, costPerDay, ExtraBedCost FROM Reservation NATURAL JOIN ReservationHasRoom NATURAL RIGHT OUTER JOIN Room " +
         "WHERE Room.roomNum NOT IN (SELECT Room.roomNum FROM Reservation NATURAL JOIN ReservationHasRoom NATURAL RIGHT OUTER JOIN Room " + 
                 "WHERE (END >  @0 AND START < @1 AND cancelled = 0 AND location = @2)) " + 
         "AND location = @2 ORDER BY Room.roomNum";
 
-    var deleteReservation = "UPDATE Reservation SET cancelled = 1 WHERE reservationID = @0";
+    var deleteReservation = "UPDATE Reservation SET cancelled = 1, cost = CASE " +
+    "WHEN DATEDIFF(@1, @2) > 3 THEN 0" +
+    "WHEN DATEDIFF(@1, @2) < 3 && DATEDIFF(@1, @2) > 1 THEN (0.2 * @0)" +
+    "WHEN DATEDIFF(@1, @2) <= 1 THEN @0" +
+    "END " +
+    "WHERE reservationID = @3";
+
 }
 <!DOCTYPE html>
 
@@ -14,6 +28,10 @@
         <title></title>
     </head>
     <body>
-        Placeholder Text @UrlData.First()
+        @if(DateDiff < 3) {
+            <input type="submit" class="btn btn-default submit" value="Cancel">
+        } else {        
+        <p>Placeholder Text @UrlData.First()</p>
+        }
     </body>
 </html>
