@@ -63,7 +63,7 @@
                             Response.Cookies["endDate"].Value = Request["endDate"];
                             using (var db = Database.Open("cs4400_Group_86"))
                             {
-                                if (DateTime.Parse(Request["startDate"]) > DateTime.Now && DateTime.Parse(Request["endDate"]) > DateTime.Now) {
+                                if (DateTime.Parse(Request["startDate"]) > DateTime.Now && DateTime.Parse(Request["endDate"]) > DateTime.Now && DateTime.Parse(Request["endDate"]) != DateTime.Parse(Request["startDate"])) {
                                     foreach(var row in db.Query(queryString, Request["startDate"], Request["endDate"], Request["location"]))
                                     {
                                         <tr> 
