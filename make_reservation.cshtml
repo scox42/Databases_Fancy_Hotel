@@ -126,11 +126,15 @@
                             <select class="form-control" name="cardList">
 	                            @using (var db = Database.Open("cs4400_Group_86"))
                                  {
-                                    foreach (var row in db.Query("SELECT cardNum FROM PaymentInfo WHERE CUserName = @0", Request.Cookies["UserName"].Value))
+                                    foreach (var row in db.Query("SELECT cardNum, expiration FROM PaymentInfo WHERE CUserName = @0", Request.Cookies["UserName"].Value))
                                     {
+                                        string exp = row.expiration.ToString();
+                                        DateTime expDate = DateTime.Parse(exp);
                                         string lastFour = row.cardNum.ToString();
                                         lastFour = "xxxx xxxx xxxx " + lastFour.Substring(lastFour.Length - 4);
+                                        if (expDate > DateTime.Now) {
                                         <option value="@row.cardNum.ToString()">@lastFour</option>
+                                        }
                                     }
                                  }
 	                        </select>
