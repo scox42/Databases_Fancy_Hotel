@@ -1,6 +1,6 @@
 ﻿@{
     var queryString = "SELECT MONTHNAME(START) AS MONTH , location, SUM(cost) AS Total FROM Reservation " +
-        "NATURAL JOIN ReservationHasRoom NATURAL JOIN Room GROUP BY location, MONTHNAME(START) ORDER BY MONTH(START)," +
+        "NATURAL JOIN ReservationHasRoom NATURAL JOIN Room WHERE MONTHNAME(START) = 'August' OR MONTHNAME(START) = 'September' GROUP BY location, MONTHNAME(START) ORDER BY MONTH(START)," +
         "location";
 }
 
