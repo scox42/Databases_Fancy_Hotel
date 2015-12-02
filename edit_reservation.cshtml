@@ -1,17 +1,11 @@
 ﻿@{
-    var StartDate = "";
-    var currentDate = DateTime.Now;
+    DateTime startDate;
     using(var db = Database.Open("cs4400_Group_86"))
     {
-        StartDate = db.QuerySingle("SELECT start FROM Reservation WHERE reservationID = @0", UrlData.First());
+        startDate = db.QuerySingle("SELECT start FROM Reservation WHERE reservationID = @0", UrlData.First()).start;
     }
-    var DateDiff = (currentDate - DateTime.Parse(StartDate)).TotalDays;
+    var DateDiff = (DateTime.Today - startDate).Days;
     var reservationStartDate = "SELECT start FROM Reservation WHERE reservationID = @0";
-    var queryAvailable = "SELECT DISTINCT roomNum, category, numPeople, costPerDay, ExtraBedCost FROM Reservation NATURAL JOIN ReservationHasRoom NATURAL RIGHT OUTER JOIN Room " +
-        "WHERE Room.roomNum NOT IN (SELECT Room.roomNum FROM Reservation NATURAL JOIN ReservationHasRoom NATURAL RIGHT OUTER JOIN Room " + 
-                "WHERE (END >  @0 AND START < @1 AND cancelled = 0 AND location = @2)) " + 
-        "AND location = @2 ORDER BY Room.roomNum";
-
     var deleteReservation = "UPDATE Reservation SET cancelled = 1, cost = CASE " +
     "WHEN DATEDIFF(@1, @2) > 3 THEN 0" +
     "WHEN DATEDIFF(@1, @2) < 3 && DATEDIFF(@1, @2) > 1 THEN (0.2 * @0)" +
